@@ -43,7 +43,7 @@ input_data = pd.DataFrame([{
 
 # Make prediction when the "Predict" button is clicked
 if st.button("Predict", type="primary"):
-    response = requests.post(f"{BACKEND_URL}/v1/sales", json=input_data.to_dict(orient='records')[0])  # Send data to Flask API
+    response = requests.post(f"{BACKEND_URL}/v1/predict", json=input_data.to_dict(orient='records')[0])  # Send data to Flask API
     if response.status_code == 200:
         prediction = response.json()['Predicted Sales Total (in dollars)']
         st.success(f"Predicted Sales Total (in dollars): {prediction}")
@@ -59,7 +59,7 @@ uploaded_file = st.file_uploader("Upload CSV file for batch prediction", type=["
 # Make batch prediction when the "Predict Batch" button is clicked
 if uploaded_file is not None:
     if st.button("Predict Batch", type="primary"):
-        response = requests.post(f"{BACKEND_URL}/v1/salesbatch", files={"file": uploaded_file})  # Send file to Flask API
+        response = requests.post(f"{BACKEND_URL}/v1/predictbatch", files={"file": uploaded_file})  # Send file to Flask API
         if response.status_code == 200:
             predictions = response.json()
             st.success("Batch predictions completed!")
