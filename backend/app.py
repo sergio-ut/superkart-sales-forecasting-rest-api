@@ -20,10 +20,10 @@ def home():
     return "Welcome to the SuperKart Sales Revenue Forecasting API!"
 
 # Define an endpoint for single product sales prediction (POST request)
-@superkart_sales_predictor_api.post('/v1/sales')
+@superkart_sales_predictor_api.post('/v1/predict')
 def predict_sales():
     """
-    This function handles POST requests to the '/v1/sales' endpoint.
+    This function handles POST requests to the '/v1/predict' endpoint.
     It expects a JSON payload containing product and store details and returns
     the forecasted sales revenue as a JSON response.
     """
@@ -48,7 +48,7 @@ def predict_sales():
     input_data = pd.DataFrame([sample])
 
     # Make prediction directly using the pipeline
-    predicted_sales = model.predict(input_data)[0]
+    predicted_sales = model.predict(input_data)
 
     # Convert predicted_sales to Python float to prevent JSON encoding errors
     predicted_sales = round(float(predicted_sales), 2)
@@ -58,10 +58,10 @@ def predict_sales():
 
 
 # Define an endpoint for batch prediction (POST request)
-@superkart_sales_predictor_api.post('/v1/salesbatch')
+@superkart_sales_predictor_api.post('/v1/predictbatch')
 def predict_sales_batch():
     """
-    This function handles POST requests to the '/v1/salesbatch' endpoint.
+    This function handles POST requests to the '/v1/predictbatch' endpoint.
     It expects a CSV file containing details for multiple products/stores
     and returns the predicted sales totals as a dictionary.
     """
