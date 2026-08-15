@@ -28,27 +28,13 @@ def predict_sales():
     the forecasted sales revenue as a JSON response.
     """
     # Get the JSON data from the request body
-    sales_data = request.get_json()
-
-    # Extract relevant features from the JSON data matching the training variables
-    sample = {
-        'Product_Weight': sales_data['Product_Weight'],
-        'Product_Sugar_Content': sales_data['Product_Sugar_Content'],
-        'Product_Allocated_Area': sales_data['Product_Allocated_Area'],
-        'Product_Type': sales_data['Product_Type'],
-        'Product_MRP': sales_data['Product_MRP'],
-        'Store_Id': sales_data['Store_Id'],
-        'Store_Establishment_Year': sales_data['Store_Establishment_Year'],
-        'Store_Size': sales_data['Store_Size'],
-        'Store_Location_City_Type': sales_data['Store_Location_City_Type'],
-        'Store_Type': sales_data['Store_Type']
-    }
+    property_data = request.get_json()
 
     # Convert the extracted data into a Pandas DataFrame
-    input_data = pd.DataFrame([sample])
+    input_data = pd.DataFrame(property_data)
 
     # Make prediction directly using the pipeline
-    predicted_sales = model.predict(input_data)
+    predicted_sales = model.predict(input_data)[0]
 
     # Convert predicted_sales to Python float to prevent JSON encoding errors
     predicted_sales = round(float(predicted_sales), 2)
@@ -77,12 +63,12 @@ def predict_sales_batch():
     # Round the sales predictions cleanly
     predicted_sales_totals = [round(float(sales), 2) for sales in predicted_raw_sales]
 
-    # Create a dictionary of predictions with Product_Id as keys
-    product_ids = input_data['Product_Id'].tolist()
-    output_dict = dict(zip(product_ids, predicted_sales_totals))
+    # Create a dictionary of predictions with row indices as keys to match expected response format
+    indices = [str(i) for i in range(len(predicted_sales_totals))]
+    output_dict = dict(zip(indices, predicted_sales_totals))
 
     # Return the predictions dictionary as a JSON response
-    return output_dict
+    return jsonify(output_dict)
 
 # Run the Flask application in debug mode if this script is executed directly
 if __name__ == '__main__':
