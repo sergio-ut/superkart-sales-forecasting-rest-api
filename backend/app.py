@@ -35,13 +35,13 @@ def predict_sales():
         'Product_Weight': sales_data['Product_Weight'],
         'Product_Sugar_Content': sales_data['Product_Sugar_Content'],
         'Product_Allocated_Area': sales_data['Product_Allocated_Area'],
-        'Product_Type': sales_data['Product_Type'],
         'Product_MRP': sales_data['Product_MRP'],
-        'Store_Id': sales_data['Store_Id'],
-        'Store_Establishment_Year': sales_data['Store_Establishment_Year'],
         'Store_Size': sales_data['Store_Size'],
         'Store_Location_City_Type': sales_data['Store_Location_City_Type'],
-        'Store_Type': sales_data['Store_Type']
+        'Store_Type': sales_data['Store_Type'],
+        'Product_Id_char': sales_data['Product_Id_char'],
+        'Store_Age_Years': sales_data['Store_Age_Years'],
+        'Product_Type_Category': sales_data['Product_Type_Category']
     }
 
     # Convert the extracted data into a Pandas DataFrame
@@ -74,15 +74,15 @@ def predict_sales_batch():
     # Make predictions for all rows in the DataFrame using the pipeline
     predicted_raw_sales = model.predict(input_data).tolist()
 
-    # Round the sales predictions cleanly
-    predicted_sales_totals = [round(float(sales), 2) for sales in predicted_raw_sales]
-
-    # Create a dictionary of predictions with Product IDs as keys matching sample template workflow
-    product_ids = input_data['Product_Id'].tolist()
-    output_dict = dict(zip(product_ids, predicted_sales_totals))
+    # Create a dictionary of predictions using the row index as the key
+    output_dict = {
+        str(i): round(float(pred), 2)
+        for i, pred in enumerate(predicted_raw_sales)
+    }
 
     # Return the predictions dictionary as a JSON response
     return output_dict
+
 
 # Run the Flask application in debug mode if this script is executed directly
 if __name__ == '__main__':
